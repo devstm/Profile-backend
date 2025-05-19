@@ -1,4 +1,4 @@
-import { PrismaClient, User, Provider } from '@prisma/client';
+import { PrismaClient, User, Provider } from '../generated/prisma';
 import bcrypt from 'bcrypt';
 import {
   LoginRequest,

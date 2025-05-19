@@ -13,17 +13,19 @@ datasource db {
 
 // User model with authentication
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  password      String?   // Optional for OAuth users
-  name          String?
-  role          Role      @default(USER)
-  refreshToken  String?
-  provider      Provider? // Authentication provider
-  providerId    String?   // User ID from provider
-  avatar        String?   // Profile picture URL
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           String     @id @default(uuid())
+  email        String     @unique
+  password     String? // Optional for OAuth users
+  name         String?
+  role         Role       @default(USER)
+  refreshToken String?
+  provider     Provider? // Authentication provider
+  providerId   String? // User ID from provider
+  avatar       String? // Profile picture URL
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  templates    Template[] // User's templates
+  media        Media[] // User's media files
 
   @@index([provider, providerId]) // Index for faster OAuth lookups
 }
@@ -37,4 +39,100 @@ enum Provider {
   LOCAL
   GOOGLE
   FACEBOOK
+}
+
+// Template model to store website templates
+model Template {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Owner relationship
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Template data - stored as JSON
+  templateData Json?
+
+  // Template type
+  templateType TemplateType @default(GENERAL)
+
+  // Template sections
+  sections TemplateSection[]
+
+  // Media assets
+  media Media[]
+
+  @@index([userId])
+  @@index([templateType])
+}
+
+// Template section model for modular templates
+model TemplateSection {
+  id          String      @id @default(uuid())
+  name        String
+  sectionType SectionType
+  sectionData Json?
+  order       Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Template relationship
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId])
+  @@index([sectionType])
+}
+
+// Media assets for templates
+model Media {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileType  String
+  fileSize  Int
+  url       String
+  publicId  String? // For cloud storage like Cloudinary
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Owner relationship
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Template relationship (optional)
+  templateId String?
+  template   Template? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([templateId])
+}
+
+// Enums for template and section types
+enum TemplateType {
+  GENERAL
+  RESTAURANT
+  PORTFOLIO
+  PROGRAMMER
+  DEVELOPER
+  BUSINESS
+  MEDICAL
+}
+
+enum SectionType {
+  HEADER
+  ABOUT
+  SERVICES
+  MENU
+  PORTFOLIO
+  TEAM
+  CONTACT
+  BLOG
+  FOOTER
+  PROJECTS
+  SKILLS
+  RESUME
 }

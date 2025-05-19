@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { User } from '@prisma/client';
+import { User } from '../generated/prisma';
 
 // JWT secret keys should be stored in environment variables
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access-token-secret';
@@ -16,7 +16,7 @@ const REFRESH_TOKEN_EXPIRY = '7d'; // 7 days
  */
 export const generateAccessToken = (user: User): string => {
   return jwt.sign(
-    { 
+    {
       userId: user.id,
       email: user.email,
       role: user.role

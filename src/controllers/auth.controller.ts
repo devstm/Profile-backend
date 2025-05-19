@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { authService } from '../services/auth.service';
 import { AuthRequest } from '../types/auth.types';
-import { Provider } from '@prisma/client';
+import { Provider } from '../generated/prisma';
 
 /**
  * Authentication controller for handling auth requests

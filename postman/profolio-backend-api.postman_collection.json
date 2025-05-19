@@ -1,0 +1,771 @@
+{
+	"info": {
+		"_postman_id": "a8e5f3b2-6c7d-4e8f-9a1b-2c3d4e5f6a7b",
+		"name": "Profolio Backend API",
+		"description": "A collection for testing the Profolio Backend API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "templateId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sectionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "mediaId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "Check if the API is running"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);",
+									"pm.environment.set(\"refreshToken\", jsonData.refreshToken);",
+									"pm.environment.set(\"userId\", jsonData.user.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"name\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);",
+									"pm.environment.set(\"refreshToken\", jsonData.refreshToken);",
+									"pm.environment.set(\"userId\", jsonData.user.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with existing user"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/refresh-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh-token"
+							]
+						},
+						"description": "Refresh access token"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout user"
+					},
+					"response": []
+				},
+				{
+					"name": "OAuth Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);",
+									"pm.environment.set(\"refreshToken\", jsonData.refreshToken);",
+									"pm.environment.set(\"userId\", jsonData.user.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"oauth-user@example.com\",\n    \"name\": \"OAuth User\",\n    \"provider\": \"GOOGLE\",\n    \"providerId\": \"google-user-id-123\",\n    \"avatar\": \"https://example.com/avatar.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/oauth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"oauth"
+							]
+						},
+						"description": "Login with OAuth provider"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Templates",
+			"item": [
+				{
+					"name": "Create Template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"templateId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Restaurant Template\",\n    \"description\": \"A template for restaurant websites\",\n    \"templateType\": \"RESTAURANT\",\n    \"isPublic\": true,\n    \"templateData\": {\n        \"backgroundColor\": \"#ffffff\",\n        \"navbarColor\": \"#333333\",\n        \"logoName\": \"Gourmet Bistro\",\n        \"logoColor\": \"#ffffff\",\n        \"buttonColor\": \"#ff6b6b\",\n        \"fontFamily\": \"Poppins\",\n        \"headerTitle\": \"Welcome to Gourmet Bistro\",\n        \"headerSubtitle\": \"Fine Dining Experience\",\n        \"headerDescription\": \"Experience the finest cuisine in town with our award-winning chefs.\",\n        \"headerImage\": \"header-image.jpg\",\n        \"titleTextColor\": \"#333333\",\n        \"subtitleTextColor\": \"#666666\",\n        \"descriptionTextColor\": \"#999999\",\n        \"menuItems\": {\n            \"appetizers\": [\n                {\n                    \"name\": \"Bruschetta\",\n                    \"description\": \"Toasted bread topped with tomatoes, garlic, and basil\",\n                    \"price\": \"$8.99\",\n                    \"img\": \"bruschetta.jpg\"\n                },\n                {\n                    \"name\": \"Calamari\",\n                    \"description\": \"Fried squid served with marinara sauce\",\n                    \"price\": \"$10.99\",\n                    \"img\": \"calamari.jpg\"\n                }\n            ],\n            \"mainCourses\": [\n                {\n                    \"name\": \"Filet Mignon\",\n                    \"description\": \"8oz filet with garlic mashed potatoes and seasonal vegetables\",\n                    \"price\": \"$29.99\",\n                    \"img\": \"filet.jpg\"\n                },\n                {\n                    \"name\": \"Salmon\",\n                    \"description\": \"Grilled salmon with lemon butter sauce and wild rice\",\n                    \"price\": \"$24.99\",\n                    \"img\": \"salmon.jpg\"\n                }\n            ]\n        },\n        \"contactPhone\": \"(555) 123-4567\",\n        \"contactEmail\": \"info@gourmetbistro.com\",\n        \"contactLocation\": \"123 Main St, Anytown, USA\",\n        \"openTime\": \"Mon-Sat: 11am-10pm, Sun: 12pm-9pm\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates"
+							]
+						},
+						"description": "Create a new template"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Template by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/{{templateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"{{templateId}}"
+							]
+						},
+						"description": "Get template by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Templates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates"
+							]
+						},
+						"description": "Get templates by user ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Public Templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/public?type=RESTAURANT",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"public"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "RESTAURANT",
+									"description": "Optional template type filter"
+								}
+							]
+						},
+						"description": "Get public templates"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Restaurant Template\",\n    \"description\": \"An updated template for restaurant websites\",\n    \"isPublic\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/{{templateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"{{templateId}}"
+							]
+						},
+						"description": "Update template"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Template Data",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"backgroundColor\": \"#f5f5f5\",\n    \"navbarColor\": \"#222222\",\n    \"logoName\": \"Gourmet Bistro\",\n    \"logoColor\": \"#ffffff\",\n    \"buttonColor\": \"#ff4757\",\n    \"fontFamily\": \"Montserrat\",\n    \"headerTitle\": \"Welcome to Gourmet Bistro\",\n    \"headerSubtitle\": \"Exquisite Dining Experience\",\n    \"headerDescription\": \"Experience the finest cuisine in town with our award-winning chefs.\",\n    \"headerImage\": \"header-image-updated.jpg\",\n    \"contactPhone\": \"(555) 987-6543\",\n    \"contactEmail\": \"contact@gourmetbistro.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/{{templateId}}/data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"{{templateId}}",
+								"data"
+							]
+						},
+						"description": "Update template data"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Template",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/{{templateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"{{templateId}}"
+							]
+						},
+						"description": "Delete template"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Template Section",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"sectionId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Header Section\",\n    \"sectionType\": \"HEADER\",\n    \"sectionData\": {\n        \"title\": \"Welcome to Our Restaurant\",\n        \"subtitle\": \"Fine Dining Experience\",\n        \"backgroundImage\": \"header-bg.jpg\"\n    },\n    \"order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/{{templateId}}/sections",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"{{templateId}}",
+								"sections"
+							]
+						},
+						"description": "Add section to template"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Template Section",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Header Section\",\n    \"sectionData\": {\n        \"title\": \"Welcome to Our Gourmet Restaurant\",\n        \"subtitle\": \"Exquisite Dining Experience\",\n        \"backgroundImage\": \"header-bg-updated.jpg\"\n    },\n    \"order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/sections/{{sectionId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"sections",
+								"{{sectionId}}"
+							]
+						},
+						"description": "Update template section"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Template Section",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/templates/sections/{{sectionId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"templates",
+								"sections",
+								"{{sectionId}}"
+							]
+						},
+						"description": "Delete template section"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "Upload Media",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"mediaId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/path/to/your/image.jpg",
+									"description": "File to upload"
+								},
+								{
+									"key": "templateId",
+									"value": "{{templateId}}",
+									"description": "Optional template ID",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/media",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"media"
+							]
+						},
+						"description": "Upload media file"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Media by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/media/{{mediaId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"media",
+								"{{mediaId}}"
+							]
+						},
+						"description": "Get media by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Media",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/media",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"media"
+							]
+						},
+						"description": "Get media by user ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Template Media",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/media/template/{{templateId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"media",
+								"template",
+								"{{templateId}}"
+							]
+						},
+						"description": "Get media by template ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Associate Media with Template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"templateId\": \"{{templateId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/media/{{mediaId}}/template",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"media",
+								"{{mediaId}}",
+								"template"
+							]
+						},
+						"description": "Associate media with template"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Media",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/media/{{mediaId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"media",
+								"{{mediaId}}"
+							]
+						},
+						"description": "Delete media"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

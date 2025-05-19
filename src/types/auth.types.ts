@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { User, Role, Provider } from '@prisma/client';
+import { User, Role, Provider } from '../generated/prisma';
 
 /**
  * Authentication request with user data

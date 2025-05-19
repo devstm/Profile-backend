@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { Role } from '@prisma/client';
+import { Role } from '../generated/prisma';
 import { verifyAccessToken } from '../utils/jwt.utils';
 import { AuthRequest } from '../types/auth.types';
 
@@ -16,7 +16,7 @@ export const authenticate = async (
 ): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ message: 'Unauthorized - No token provided' });
       return;
