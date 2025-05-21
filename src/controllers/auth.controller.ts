@@ -142,12 +142,12 @@ const authController = {
       // Validate provider enum
       if (!Object.values(Provider).includes(provider)) {
         res.status(400).json({
-          message: 'Invalid provider. Must be one of: ' + Object.values(Provider).join(', ')
+          message: `Invalid provider. Must be one of: ${Object.values(Provider).join(', ')}`
         });
         return;
       }
 
-      // Process OAuth login
+      // Login or register with OAuth
       const result = await authService.oauthLogin({
         email,
         name,
@@ -159,12 +159,6 @@ const authController = {
       res.status(200).json(result);
     } catch (error) {
       console.error('OAuth login error:', error);
-
-      if (error instanceof Error && error.message === 'Email already in use with different provider') {
-        res.status(409).json({ message: error.message });
-        return;
-      }
-
       res.status(500).json({ message: 'OAuth login failed' });
     }
   }

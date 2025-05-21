@@ -219,7 +219,14 @@ const templateController = {
       }
 
       const { id } = req.params;
-      const templateData = req.body;
+      const { templateData } = req.body;
+
+      // Validate that templateData is provided
+      if (!templateData) {
+        res.status(400).json({ message: 'Template data is required' });
+        console.error('Template data missing in request body:', req.body);
+        return;
+      }
 
       // Update template data
       try {

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '../generated/prisma';
 
 // JWT secret keys should be stored in environment variables
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access-token-secret';
+const ACCESS_TOKEN_SECRET = process.env.NEXTAUTH_SECRET || 'access-token-secret';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'refresh-token-secret';
 
 // Token expiration times
@@ -60,6 +60,19 @@ export const verifyAccessToken = (token: string): any => {
 export const verifyRefreshToken = (token: string): any => {
   try {
     return jwt.verify(token, REFRESH_TOKEN_SECRET);
+  } catch (error) {
+    return null;
+  }
+};
+
+/**
+ * Verify NextAuth JWT token
+ * @param token JWT token from NextAuth
+ * @returns Decoded token payload or null if invalid
+ */
+export const verifyNextAuthToken = (token: string): any => {
+  try {
+    return jwt.verify(token, ACCESS_TOKEN_SECRET);
   } catch (error) {
     return null;
   }

@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { Role } from '../generated/prisma';
-import { verifyAccessToken } from '../utils/jwt.utils';
+import { verifyAccessToken, verifyNextAuthToken } from '../utils/jwt.utils';
 import { AuthRequest } from '../types/auth.types';
 
 /**
@@ -23,14 +23,31 @@ export const authenticate = async (
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = verifyAccessToken(token);
-
+    
+    // Try verifying with our access token first (for local auth)
+    let decoded = verifyAccessToken(token);
+    
+    // If not valid as access token, try as NextAuth token
     if (!decoded) {
-      res.status(401).json({ message: 'Unauthorized - Invalid token' });
-      return;
+      decoded = verifyNextAuthToken(token);
+      
+      if (decoded) {
+        // NextAuth tokens have different structure
+        // Map NextAuth token to our expected format
+        req.user = {
+          userId: decoded.backendUserId,  // From synced backend user ID
+          email: decoded.email,
+          role: 'USER' // Default role for OAuth users
+        };
+        next();
+        return;
+      } else {
+        res.status(401).json({ message: 'Unauthorized - Invalid token' });
+        return;
+      }
     }
 
-    // Add user data to request
+    // Standard token from our backend
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
