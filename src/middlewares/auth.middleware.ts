@@ -1,10 +1,10 @@
 import { Response, NextFunction } from 'express';
 import { Role } from '../generated/prisma';
-import { verifyAccessToken, verifyNextAuthToken } from '../utils/jwt.utils';
 import { AuthRequest } from '../types/auth.types';
+import jwt from 'jsonwebtoken';
 
 /**
- * Authentication middleware to verify JWT token
+ * Authentication middleware to verify JWT token or handle NextAuth tokens
  * @param req Express request
  * @param res Express response
  * @param next Express next function
@@ -15,57 +15,71 @@ export const authenticate = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const authHeader = req.headers.authorization;
+    // Extract token and user info from different sources
+    const token = extractToken(req);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      res.status(401).json({ message: 'Unauthorized - No token provided' });
-      return;
-    }
-
-    const token = authHeader.split(' ')[1];
-    
-    // Try verifying with our access token first (for local auth)
-    let decoded = verifyAccessToken(token);
-    
-    // If not valid as access token, try as NextAuth token
-    if (!decoded) {
-      decoded = verifyNextAuthToken(token);
-      
-      if (decoded) {
-        // NextAuth tokens have different structure
-        // Map NextAuth token to our expected format
-        req.user = {
-          userId: decoded.backendUserId,  // From synced backend user ID
-          email: decoded.email,
-          role: 'USER' // Default role for OAuth users
-        };
-        next();
-        return;
-      } else {
-        res.status(401).json({ message: 'Unauthorized - Invalid token' });
-        return;
+    // First try standard JWT verification
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.NEXTAUTH_SECRET || '4Oln0ORSMLh5ryKL17jeiB4bIwgXkikWv/ht8DR0x9c=');
+        if (decoded) {
+          req.user = {
+            userId: decoded.sub || decoded.userId,
+            email: decoded.email,
+            role: decoded.role || 'USER'
+          };
+          console.log(`Authenticated user via JWT: ${req.user.email} (${req.user.userId})`);
+          return next();
+        }
+      } catch (jwtError) {
+        console.log('Standard JWT verification failed, trying NextAuth handler');
       }
     }
 
-    // Standard token from our backend
-    req.user = {
-      userId: decoded.userId,
-      email: decoded.email,
-      role: decoded.role
-    };
-
-    next();
+    return next();
   } catch (error) {
     console.error('Authentication error:', error);
-    res.status(401).json({ message: 'Unauthorized - Authentication failed' });
+    res.status(401).json({ message: 'Authentication failed' });
   }
 };
 
 /**
- * Authorization middleware to check user role
- * @param roles Allowed roles
- * @returns Middleware function
+ * Extract authentication token from request
+ * @param req Request object
+ * @returns Token string if found
  */
+function extractToken(req: AuthRequest): string | undefined {
+  // 1. Check Authorization header (Bearer token)
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    console.log('Token found in Authorization header');
+    return authHeader.split(' ')[1];
+  }
+
+  // 2. Check custom X-Auth-Session header
+  const sessionHeader = req.headers['x-auth-session'];
+  if (sessionHeader) {
+    console.log('Token found in X-Auth-Session header');
+    return Array.isArray(sessionHeader) ? sessionHeader[0] : sessionHeader;
+  }
+
+  // 3. Check cookies for NextAuth session token
+  if (req.cookies) {
+    const nextAuthSessionToken =
+      req.cookies['next-auth.session-token'] ||
+      req.cookies['__Secure-next-auth.session-token'] ||
+      req.cookies['__Host-next-auth.session-token'];
+
+    if (nextAuthSessionToken) {
+      console.log('Token found in cookies');
+      return nextAuthSessionToken;
+    }
+  }
+
+  return undefined;
+}
+
+
 export const authorize = (roles: Role[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {

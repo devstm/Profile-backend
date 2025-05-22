@@ -7,6 +7,7 @@ import { healthRouter } from './routes/health.routes';
 import { authRouter } from './routes/auth.routes';
 import { templateRouter } from './routes/template.routes';
 import { mediaRouter } from './routes/media.routes';
+import cookieParser from 'cookie-parser';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json({ limit: '50mb' })); // Increased limit for large template data
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(cookieParser());
 
 // Static files for uploads
 const uploadsDir = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');

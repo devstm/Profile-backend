@@ -20,7 +20,9 @@ const templateService = {
    */
   createTemplate: async (userId: string, data: CreateTemplateRequest): Promise<Template> => {
     const prisma = getPrismaInstance();
-
+    
+    console.log('userId: ', userId);
+    console.log('data: ', data);
     return await prisma.template.create({
       data: {
         name: data.name,
